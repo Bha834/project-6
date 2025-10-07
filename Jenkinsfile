@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         // Docker image info
-        IMAGE_NAME = "talhahamidsyed/myapp"
+        IMAGE_NAME = "bha02/myapp"
         IMAGE_TAG  = "${GIT_COMMIT.take(7)}"   // short git commit hash
-        SSH_TARGET = "ubuntu@<EC2_PUBLIC_IP>"  // replace with your EC2 public IP
+        SSH_TARGET = "ubuntu@13.127.199.194"  // replace with your EC2 public IP
     }
 
     stages {
