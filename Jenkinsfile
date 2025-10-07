@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Docker image info
         IMAGE_NAME = "bha02/myapp"
-        IMAGE_TAG  = "${GIT_COMMIT.take(7)}"   // short git commit hash
-        SSH_TARGET = "ubuntu@13.127.199.194"  // replace with your EC2 public IP
+        IMAGE_TAG  = "${GIT_COMMIT.take(7)}"
+        SSH_TARGET = "ubuntu@13.127.199.194"
     }
 
     stages {
@@ -18,6 +17,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Dockerfile root me hai, context = .
                     sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                     sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
                 }
