@@ -1,0 +1,53 @@
+- name: Install Docker, Docker Compose, Jenkins on EC2
+  hosts: devops
+  become: yes
+
+  tasks:
+
+    - name: Update all packages
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Install Docker
+      block:
+        - command: amazon-linux-extras enable docker -y
+        - yum:
+            name: docker
+            state: present
+        - service:
+            name: docker
+            state: started
+            enabled: yes
+        - user:
+            name: ec2-user
+            groups: docker
+            append: yes
+
+    - name: Install Docker Compose plugin (v2)
+      block:
+        - name: Create CLI plugins directory
+          file:
+            path: /usr/local/lib/docker/cli-plugins
+            state: directory
+            mode: '0755'
+
+        - name: Download Docker Compose binary
+          get_url:
+            url: "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64"
+            dest: /usr/local/lib/docker/cli-plugins/docker-compose
+            mode: '0755'
+
+    - name: Copy docker-compose.yml to EC2
+      copy:
+        src: docker-compose.yml
+        dest: /home/ec2-user/docker-compose.yml
+        owner: ec2-user
+        mode: '0644'
+
+    - name: Start Jenkins container using Docker Compose
+      become_user: ec2-user
+      shell: |
+        export HOME=/home/ec2-user
+        cd /home/ec2-user
+        docker compose up -d
