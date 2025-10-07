@@ -17,12 +17,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Dockerfile root me hai, context = .
-                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./profile-app"
                     sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
                 }
             }
         }
+
 
         stage('Push to Docker Hub') {
             steps {
